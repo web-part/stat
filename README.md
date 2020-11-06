@@ -1,6 +1,6 @@
 # @webpart/stat
 
-统计网站开发阶段中的文件信息和用 CMD 模式定义的模块信息。
+统计开发阶段中的文件信息和用 CMD 模式定义的模块信息。
 
 
 `npm install @webpart/stat`
@@ -31,7 +31,6 @@ let infos = stat({
         'lib/**/*.js',
         'modules/**/*.js',
         'views/**/*.js',
-        'routers/**/*.js',
         'index.js',
     ],
 
