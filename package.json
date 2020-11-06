@@ -1,6 +1,6 @@
 {
   "name": "@webpart/stat",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "",
   "main": "index.js",
   "scripts": {},
@@ -8,6 +8,10 @@
   "author": "micty",
   "email": "mictydeng@qq.com",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/web-part/stat.git"
+  },
   "dependencies": {
     "@definejs/file": "^0.1.8",
     "@definejs/fn": "^0.1.4",
