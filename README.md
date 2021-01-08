@@ -7,34 +7,12 @@
 
 ``` javascript
 
-const stat = require('@webpart/stat');
+const { Module, HTML, Analyser, } = require('@webpart/stat');
+let dir = './htdocs/';
 
-/**
-* 统计文件和用 CMD 模式定义的模块信息。
-* @param {Object} opt 选项参数。
-*   其中： (dir, patterns, excludes) 用来组成模式匹配进行模糊搜索得到文件列表。
-*   file、files、(dir, patterns, excludes) 三者的结果会合并成一个大的文件名数组作为最终要处理的文件列表。
-*   opt = {
-*       file: '',       //可选，要统计的单个文件。
-*       files: [],      //可选，要统计的多个文件的数组。
-*       dir: '',        //可选，使用模式匹配时要搜索的目录。
-*       patterns: [],   //可选，使用模式匹配时要搜索的模式列表。
-*       excludes: [],   //可选，使用模式匹配时要排除的模式列表。
-*       defines: [],    //可选，针对要解析的模块时，模块的定义方式。
-*   };
-*/
-let infos = stat({
-    dir: './htdocs/',
-
-    patterns: [
-        'data/**/*.js',
-        'lib/**/*.js',
-        'modules/**/*.js',
-        'views/**/*.js',
-        'index.js',
-    ],
-
-    defines: [
+//分析统计出最原始的文件信息和模块信息。
+let moduleInfos = Module.stat(dir, {
+     defines: [
         'define',
         'define.panel',
         'define.view',
@@ -42,11 +20,41 @@ let infos = stat({
         'KISP.view',
     ],
 
+    patterns: [
+        'data/**/*.js',
+        'lib/**/*.js',
+        'modules/**/*.js',
+        'views/**/*.js',
+    ],
+
+    excludes: [ ],
 });
 
-console.log(infos);
+//进一步作分析、归类等。
+let moduleStat = Analyser.stat(moduleInfos);
 
 
+let htmlInfos = HTML.stat(dir, {
+    //用来提取出引用了 html 片段文件的标签的正则表达式。
+    link: /<link\s+.*rel\s*=\s*["\']html["\'].*\/>/ig,
+
+    //用来提取 panel 或者 view 关联模块的选择器。
+    selectors: [
+        '[data-view]',
+        '[data-panel]',
+    ],
+
+    patterns: [
+        'lib/**/*.html',
+        'modules/**/*.html',
+        'views/**/*.html',
+    ],
+
+    excludes: [],
+});
+
+//进一步作分析、归类等。
+let htmlStat = Analyser.stat(htmlInfos);
 
 ```
 

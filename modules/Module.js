@@ -1,41 +1,43 @@
 
-const Fn = require('@definejs/fn');
-const $String = require('@definejs/string');
-const Sample = require('./Module/Sample');
+const Lines = require('@definejs/lines');
+const Files = require('../lib/Files');
+const Parser = require('./Module/Parser');
+
 
 
 module.exports = {
 
     /**
-    * 从指定的 js 内容中解析出 CMD 具名模块的信息。
-    * @param {*} content 要解析的 js 内容。
-    * @param {*} defines 定义模块所使用的函数（方法）列表。
-    * @returns {Array} 返回具名模块的信息列表。
+    * 分析统计文件以及用 CMD 模式定义的模块信息。
+    * @param {string} baseDir 基目录。 一般是 `htdocs`。
+    * @param {Object} opt 
     */
-    parse(content, defines) { 
-        //去重。
-        defines = defines || [];
-        defines = [...new Set(defines)];
+    stat(baseDir, opt) {
 
-        if (!defines.length) {
-            return [];
-        }
+        let { defines, patterns, excludes, } = opt;
 
-        //根据模块定义函数列表，生成用于抽取模块信息的动态代码模板。
-        let sample = Sample.get(defines);
+        let infos = Files.stat(baseDir, patterns, excludes, function (info, index) {
+            let { content, } = info;
+            let modules = Parser.parse(content, defines);
 
-        let code = $String.format(sample, {
-            'content': content,
+            modules.forEach((module) => {
+                let { factory, } = module;
+                let lines = Lines.split(factory.content);
+
+                //扩展一些字段。
+                factory.lines = lines.length;
+            });
+
+            //增加字段。
+            return {
+                ...info,
+                modules,
+            };
         });
 
-        try {
-            let list = Fn.exec(code);
-
-            return list;
-        }
-        catch (ex) {
-            return [];
-        }
        
+        return infos;
+
     },
+
 };
