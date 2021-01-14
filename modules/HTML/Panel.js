@@ -1,8 +1,8 @@
 
+
+const cheerio = require('cheerio');
 const MD5 = require('@definejs/md5');
 const Lines = require('@definejs/lines');
-const cheerio = require('cheerio');
-const lines = require('@definejs/lines');
 
 module.exports = {
 

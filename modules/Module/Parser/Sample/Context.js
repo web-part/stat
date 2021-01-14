@@ -27,12 +27,12 @@ module.exports = {
             tree.set(keys, true);   // value 为 true。
         });
 
-        tree.each(function (info) {
-            let { keys, } = info;
+        tree.each(function (node) {
+            let { keys, } = node;
             let isTop = keys.length == 1; //是否为顶级变量。
 
 
-            let name = info.value ?
+            let name = node.value ?
                 'fn' :  //有值，说明出现在 defines 列表中，需要生成 define 函数。
                 'obj';  //无值，说明不出现在 defines 列表中。 但它是一个间接节点，需要创建一个对象作为变量的容器。
             
