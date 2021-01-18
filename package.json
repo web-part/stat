@@ -1,6 +1,6 @@
 {
   "name": "@webpart/stat",
-  "version": "0.1.7",
+  "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {},
@@ -13,9 +13,9 @@
     "url": "https://github.com/web-part/stat.git"
   },
   "dependencies": {
-    "@definejs/file": "^0.1.9",
-    "@definejs/fn": "^0.1.4",
-    "@definejs/string": "^0.1.6",
+    "@definejs/file": "^1.0.0",
+    "@definejs/fn": "^1.0.0",
+    "@definejs/string": "^1.0.0",
     "@definejs/tree": "^1.0.0",
     "cheerio": "^1.0.0-rc.3",
     "jschardet": "^2.2.1"
