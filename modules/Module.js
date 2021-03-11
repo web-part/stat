@@ -1,8 +1,8 @@
 
 const Lines = require('@definejs/lines');
 const Files = require('../lib/Files');
-const Parser = require('./Module/Parser');
-
+const Define = require('./Module/Define');
+const Require = require('./Module/Require');
 
 
 module.exports = {
@@ -13,19 +13,26 @@ module.exports = {
     * @param {Object} opt 
     */
     stat(baseDir, opt) {
+        
 
         let { defines, patterns, excludes, } = opt;
 
         let infos = Files.stat(baseDir, patterns, excludes, function (info, index) {
             let { content, } = info;
-            let modules = Parser.parse(content, defines);
+            let modules = Define.parse(content, defines);
+
+            
 
             modules.forEach((module) => {
                 let { factory, } = module;
-                let lines = Lines.split(factory.content);
+                let { content, } = factory;
+                let lines = Lines.split(content);
+                let requires = Require.parse(content);
+
 
                 //扩展一些字段。
                 factory.lines = lines.length;
+                module.requires = requires;
             });
 
             //增加字段。

@@ -3,6 +3,12 @@
 let list = [];
 
 let set = function (method, id, factory) {
+    //针对 launch(factory);
+    if (typeof id == 'function') {
+        factory = id;
+        id = '';
+    }
+    
     let type = typeof factory;
     let content = type == 'function' ? factory.toString() : '';
 

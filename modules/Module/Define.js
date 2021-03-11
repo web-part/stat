@@ -1,7 +1,7 @@
 
 const Fn = require('@definejs/fn');
 const $String = require('@definejs/string');
-const Sample = require('./Parser/Sample');
+const Sample = require('./Define/Sample');
 
 
 module.exports = {

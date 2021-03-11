@@ -1,5 +1,5 @@
 
-
+const $Object = require('@definejs/object');
 const Key$Value = require('./Analyser/Key$Value');
 
 
@@ -27,13 +27,16 @@ module.exports = {
         let id$childs = {};     //记录模块 id 对应的直接子模块 id 列表。
         let id$children = {};   //记录模块 id 对应的所有子模块 id 列表。
         let id$siblings = {};   //记录模块 id 对应的所有兄弟模块 id 列表（不包括自己）。
+        let id$publics = {};    //记录模块 id 所依赖的公共模块列表。
+        let id$privates = {};   //记录模块 id 所依赖的私有模块列表。
+        let id$dependents = {}; //记录模块 id 的依赖者列表，即模块 id 被谁依赖了。
 
 
         infos.forEach((info, index) => {
             let { file, md5, lines, modules, links, } = info;
 
             modules.map((module) => {
-                let { id, } = module;
+                let { id, requires, } = module;
                 let names = id.split('/');
                 let name = names.slice(-1)[0];
                 let parent = null;
@@ -54,6 +57,25 @@ module.exports = {
 
                 ids.push(id);
                 id$parent[id] = parent;
+
+
+                if (requires) {
+                    let publics = requires.publics.map((item) => {//
+                        //如 Key$Value.add(id$dependents, 'A', 'B'); 则表示 A 被 B 依赖了，即 B 依赖了 A。
+                        Key$Value.add(id$dependents, item.id, id);
+                        return item.id;
+                    });
+
+                    let privates = requires.privates.map((item) => {
+                        let cid = `${id}/${item.id}`;
+                        Key$Value.add(id$dependents, cid, id);
+                        return item.id;
+                    });
+
+                    id$publics[id] = publics;
+                    id$privates[id] = privates;
+                }
+                
 
                 //以下可能存在一对多关系。
                 Key$Value.add(id$file, id, file);
@@ -101,7 +123,6 @@ module.exports = {
 
         ids = ids.sort();
 
-
        
         ids.forEach((id) => {
              //收集指定模块下的所有子模块（包括间接子模块）。
@@ -135,6 +156,7 @@ module.exports = {
             file$lines,
             file$info,
             // file$links,
+            // file$hrefs,
             file$module,
             file$id,
             id$file,
@@ -144,6 +166,9 @@ module.exports = {
             id$childs,
             id$children,
             id$siblings,
+            id$publics,
+            id$privates,
+            id$dependents,
         };
 
         if (file$links) {
@@ -154,6 +179,12 @@ module.exports = {
             stat.file$hrefs = file$hrefs;
         }
         
+        //排序，为了更好看。
+        $Object.each(stat, (key, value) => {
+            if ($Object.isPlain(value)) {
+                stat[key] = $Object.sort(value);
+            }
+        });
 
         return stat;
     },

@@ -16,13 +16,12 @@ module.exports = {
         }
 
         if (Array.isArray(old)) {
-            old.push(value);
+            key$value[key] = [...new Set([...old, value,])];
             return;
         }
 
         //
         key$value[key] = [old, value,];
 
-
-    }
+    },
 };
