@@ -1,6 +1,6 @@
 {
   "name": "@webpart/stat",
-  "version": "1.0.2",
+  "version": "1.0.4",
   "description": "",
   "main": "index.js",
   "scripts": {},
@@ -17,7 +17,7 @@
     "@definejs/fn": "^1.0.0",
     "@definejs/string": "^1.0.0",
     "@definejs/tree": "^1.0.0",
-    "cheerio": "^1.0.0-rc.3",
+    "cheerio": "1.0.0-rc.3",
     "jschardet": "^2.2.1"
   }
 }

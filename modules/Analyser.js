@@ -24,6 +24,7 @@ module.exports = {
         let id$module = {};     //记录模块 id 对应的模块信息记录。 可能存在一对多，即重复定义了相同 id 的模块（在相同或不同文件）。应该以此为准判断是否存在重复 id 的模块。
 
         let id$parent = {};     //记录模块 id 对应的父模块 id。 值部分可能为空串。
+        let id$parents = {};    //记录模块 id 对应的所有父模块 id。 值部分可能为空串。
         let id$childs = {};     //记录模块 id 对应的直接子模块 id 列表。
         let id$children = {};   //记录模块 id 对应的所有子模块 id 列表。
         let id$siblings = {};   //记录模块 id 对应的所有兄弟模块 id 列表（不包括自己）。
@@ -39,6 +40,7 @@ module.exports = {
                 let { id, requires, } = module;
                 let names = id.split('/');
                 let name = names.slice(-1)[0];
+                let parents = []; //向上追溯的所有的父节点 id。
                 let parent = null;
 
                 //扩展一些字段，方便后续使用。
@@ -53,10 +55,17 @@ module.exports = {
 
                     childs.push(id);
                     id$childs[pid] = childs;
+
+                    parents = names.map((name, index) => {
+                        return names.slice(0, index + 1).join('/');
+                    });
+                    parents = parents.reverse();
+                    parents = parents.slice(1);
                 }
 
                 ids.push(id);
                 id$parent[id] = parent;
+                id$parents[id] = parents;
 
 
                 if (requires) {
@@ -163,6 +172,7 @@ module.exports = {
             id$info,
             id$module,
             id$parent,
+            id$parents,
             id$childs,
             id$children,
             id$siblings,
