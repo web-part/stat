@@ -1,60 +1,28 @@
-# @webpart/stat
+# @webpart/console
 
-统计开发阶段中的文件信息和用 CMD 模式定义的模块信息。
+在原生 console 的基础上增加输出日志到指定文件里。
 
 
-`npm install @webpart/stat`
+`npm install @webpart/console`
 
 ``` javascript
 
-const { Module, HTML, Analyser, } = require('@webpart/stat');
-let dir = './htdocs/';
+let console = require('@webpart/console');
 
-//分析统计出最原始的文件信息和模块信息。
-let moduleInfos = Module.stat(dir, {
-     defines: [
-        'define',
-        'define.panel',
-        'define.view',
-        'KISP.panel',
-        'KISP.view',
-    ],
+console.file = './output/console.log';
 
-    patterns: [
-        'data/**/*.js',
-        'lib/**/*.js',
-        'modules/**/*.js',
-        'views/**/*.js',
-    ],
-
-    excludes: [ ],
-});
-
-//进一步作分析、归类等。
-let moduleStat = Analyser.stat(moduleInfos);
+console.log('a', 'b', 'c');
+console.log({ a: 1, b: 2, });
+console.log(new Date());
+console.log(new Error('test-error'));
+console.log([1, 2, 3]);
+console.log(NaN);
+console.log(undefined);
+console.log(null);
+console.error('error--ABC');
 
 
-let htmlInfos = HTML.stat(dir, {
-    //用来提取出引用了 html 片段文件的标签的正则表达式。
-    link: /<link\s+.*rel\s*=\s*["\']html["\'].*\/>/ig,
 
-    //用来提取 panel 或者 view 关联模块的选择器。
-    selectors: [
-        '[data-view]',
-        '[data-panel]',
-    ],
-
-    patterns: [
-        'lib/**/*.html',
-        'modules/**/*.html',
-        'views/**/*.html',
-    ],
-
-    excludes: [],
-});
-
-//进一步作分析、归类等。
-let htmlStat = Analyser.stat(htmlInfos);
 
 ```
 
