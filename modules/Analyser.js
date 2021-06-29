@@ -32,12 +32,14 @@ module.exports = {
         let id$privates = {};   //记录模块 id 所依赖的私有模块列表。
         let id$dependents = {}; //记录模块 id 的依赖者列表，即模块 id 被谁依赖了。
 
+        let method$ids = {};    //记录模块的定义方法对应的模块列表。 即按定义方法把模块进行归类。
+
 
         infos.forEach((info, index) => {
             let { file, md5, lines, modules, links, } = info;
 
             modules.map((module) => {
-                let { id, requires, } = module;
+                let { id, method, requires, } = module;
                 let names = id.split('/');
                 let name = names.slice(-1)[0];
                 let parents = []; //向上追溯的所有的父节点 id。
@@ -66,6 +68,11 @@ module.exports = {
                 ids.push(id);
                 id$parent[id] = parent;
                 id$parents[id] = parents;
+
+                if (method) {
+                    let ids = method$ids[method] = method$ids[method] || [];
+                    ids.push(id);
+                }
 
 
                 if (requires) {
@@ -179,6 +186,7 @@ module.exports = {
             id$publics,
             id$privates,
             id$dependents,
+            method$ids,
         };
 
         if (file$links) {
