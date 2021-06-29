@@ -1,6 +1,9 @@
 
 const $Object = require('@definejs/object');
+const Key$List = require('./Analyser/Key$List');
 const Key$Value = require('./Analyser/Key$Value');
+
+
 
 
 module.exports = {
@@ -33,7 +36,8 @@ module.exports = {
         let id$dependents = {}; //记录模块 id 的依赖者列表，即模块 id 被谁依赖了。
 
         let method$ids = {};    //记录模块的定义方法对应的模块列表。 即按定义方法把模块进行归类。
-
+        let level$ids = {};     //层级对应的模块列表。
+        let singles = [];       //单模块列表。 单模块是指没有子模块的一级模块（公共模块）。
 
         infos.forEach((info, index) => {
             let { file, md5, lines, modules, links, } = info;
@@ -44,23 +48,23 @@ module.exports = {
                 let name = names.slice(-1)[0];
                 let parents = []; //向上追溯的所有的父节点 id。
                 let parent = null;
+                let level = names.length;
 
                 //扩展一些字段，方便后续使用。
                 Object.assign(module, {
-                    'name': name,
-                    'names': names,
+                    level,
+                    name,
+                    names,
                 });
 
-                if (names.length > 1) {
+                if (level > 1) {
                     let pid = parent = names.slice(0, -1).join('/'); //父模块 id。
-                    let childs = id$childs[pid] || [];
-
-                    childs.push(id);
-                    id$childs[pid] = childs;
+                    Key$List.add(id$childs, pid, id);
 
                     parents = names.map((name, index) => {
                         return names.slice(0, index + 1).join('/');
                     });
+
                     parents = parents.reverse();
                     parents = parents.slice(1);
                 }
@@ -69,10 +73,8 @@ module.exports = {
                 id$parent[id] = parent;
                 id$parents[id] = parents;
 
-                if (method) {
-                    let ids = method$ids[method] = method$ids[method] || [];
-                    ids.push(id);
-                }
+                Key$List.add(method$ids, method, id);
+                Key$List.add(level$ids, level, id);
 
 
                 if (requires) {
@@ -141,12 +143,19 @@ module.exports = {
 
        
         ids.forEach((id) => {
+            let { level, } = id$module[id];
+
              //收集指定模块下的所有子模块（包括间接子模块）。
             let children = ids.filter((mid) => {
                 return mid.startsWith(`${id}/`);
             });
 
             id$children[id] = children;
+
+            //单模块，即没有子模块的一级模块。
+            if (level == 1 && children.length == 0) {
+                singles.push(id);
+            }
 
 
             let parent = id$parent[id];
@@ -187,6 +196,8 @@ module.exports = {
             id$privates,
             id$dependents,
             method$ids,
+            level$ids,
+            singles,
         };
 
         if (file$links) {
