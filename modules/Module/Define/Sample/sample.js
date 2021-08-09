@@ -3,7 +3,8 @@
 let list = [];
 
 let set = function (method, id, factory) {
-    //针对 launch(factory);
+    //针对如 launch(factory); 
+    //此时 id 当作为 ''。
     if (typeof id == 'function') {
         factory = id;
         id = '';
@@ -25,6 +26,11 @@ let set = function (method, id, factory) {
 
 
 //下面的 context 由 Context.js 模块生成。
+// //如生成 
+// let define = function (id, factory) {
+//     set('define', id, factory);
+// };
+
 {context}
 
 try {

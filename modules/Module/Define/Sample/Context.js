@@ -12,8 +12,9 @@ let name$sample = {
     obj: `
         {let} {name} = {};
     `,
-
 };
+
+
 
 module.exports = {
 
