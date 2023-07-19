@@ -7,11 +7,11 @@
 
 ``` javascript
 
-const { Module, HTML, Analyser, } = require('@webpart/stat');
+const { Module, HTML, } = require('@webpart/stat');
 let dir = './htdocs/';
 
 //分析统计出最原始的文件信息和模块信息。
-let moduleInfos = Module.stat(dir, {
+let file$info = Module.parse(dir, {
      defines: [
         'define',
         'define.panel',
@@ -30,11 +30,8 @@ let moduleInfos = Module.stat(dir, {
     excludes: [ ],
 });
 
-//进一步作分析、归类等。
-let moduleStat = Analyser.stat(moduleInfos);
 
-
-let htmlInfos = HTML.stat(dir, {
+let html$info = HTML.parse(dir, {
     //用来提取出引用了 html 片段文件的标签的正则表达式。
     link: /<link\s+.*rel\s*=\s*["\']html["\'].*\/>/ig,
 
@@ -53,8 +50,6 @@ let htmlInfos = HTML.stat(dir, {
     excludes: [],
 });
 
-//进一步作分析、归类等。
-let htmlStat = Analyser.stat(htmlInfos);
 
 ```
 

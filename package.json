@@ -1,7 +1,7 @@
 {
   "name": "@webpart/stat",
-  "version": "3.0.0",
-  "description": "",
+  "version": "3.0.1",
+  "description": "统计开发阶段中的文件信息和用 CMD 模式定义的模块信息。",
   "main": "index.js",
   "scripts": {},
   "keywords": [],
