@@ -8,36 +8,30 @@ module.exports = {
 
 
     /**
-    * 分析统计。
+    * 分析。
     * @param {*} baseDir 基目录。 一般是 `htdocs`。
     * @param {*} opt 
     */
-    stat(baseDir, opt) {
+    parse(dir, { regexp, selectors, patterns, }) {
 
-        let { patterns, excludes, selectors, link, } = opt;
-       
+        let file$info = Files.readDir(dir, patterns);
 
-        let infos = Files.stat(baseDir, patterns, excludes, function (info, index) {
-            let { dir, content, } = info;
-
-      
-            let links = Link.parse(content, {
-                'cwd': dir,
-                'regexp': link,
-            });
-
+        Object.entries(file$info).forEach(([file, info]) => { 
+            let { content, } = info;
+            let links = Link.parse(content, { dir, file, regexp, });
             let modules = Panel.parse(content, selectors);
 
-            //增加字段。
-            return {
-                ...info,
-
-                modules,
+            Object.assign(info, {
+                content: undefined, //内容就不要返回了，否则数据量太大。
                 links,
-            };
+                modules,
+            });
+
         });
 
-        return infos;
+
+
+        return file$info;
 
     },
 

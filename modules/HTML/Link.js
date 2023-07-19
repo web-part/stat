@@ -1,7 +1,7 @@
 
 
-const path = require('path');
 const cheerio = require('cheerio');
+const Path = require('@definejs/path');
 const $String = require('@definejs/string');
 const Lines = require('@definejs/lines');
 
@@ -16,20 +16,29 @@ function checkCommented(line, item) {
 module.exports = {
     
 
-    parse(content, { cwd, regexp,}) {
+    parse(content, { dir, file, regexp, }) {
         //提取出如引用了 html 分文件的 link 标签
         let list = content.match(regexp);
+
         if (!list) {
             return [];
         }
 
 
+
+        let cwd = Path.dirname(file);
         let lines = Lines.split(content);
         let startNo = 0;    //下次搜索的起始行号
+
+        if (cwd == './') {
+            cwd = '';
+        }
 
         list = list.map((item, index) => {
             let no = Lines.getIndex(lines, item, startNo);  //行号。
             let line = lines[no];                           //整一行的 html。
+
+            startNo = no + 1;
 
             if (checkCommented(line, item)) { //已给注释掉了。
                 return null;
@@ -39,10 +48,7 @@ module.exports = {
             let $ = cheerio;
             let props = $(item).attr();
             let href = props.href;
-            let file = path.join(cwd, href);
-
-            startNo = no + 1;
-
+            let file = Path.join(cwd, href);
             let tabs = line.indexOf(item);              //前导空格数。
 
             return {

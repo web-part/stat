@@ -18,23 +18,26 @@ function getId(item) {
     return id;
 }
 
+
+
+
 module.exports = {
 
-    parse(content) {
+    parse({ content, beginNo, }) {
         let regexp = /\s+require\s*\(\s*["']\S+["']\)?/g;
         let list = content.match(regexp);
+
         if (!list) {
             return [];
         }
 
+
         let lines = Lines.split(content);
-
-
         let startNo = 0;    //下次搜索的起始行号
 
         list = list.map((item, index) => {
             let no = Lines.getIndex(lines, item, startNo);  //行号。
-            let line = lines[no];                           //整一行的 html。
+            let line = lines[no];                           //整一行的内容。
 
             startNo = no + 1;
 
@@ -42,7 +45,7 @@ module.exports = {
 
             return {
                 'id': id,
-                'no': no,
+                'no': no + beginNo,
                 'match': item,
                 'line': line,
             };

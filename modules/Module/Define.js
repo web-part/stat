@@ -24,9 +24,7 @@ module.exports = {
         //根据模块定义函数列表，生成用于抽取模块信息的动态代码模板。
         let sample = Sample.get(defines);
 
-        let code = $String.format(sample, {
-            'content': content,
-        });
+        let code = $String.format(sample, { content, });
 
         try {
             let list = Fn.exec(code);

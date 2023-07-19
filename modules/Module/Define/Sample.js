@@ -22,10 +22,7 @@ module.exports = {
         sample = sample || readSample();
 
         let context = Context.get(defines);
-
-        let code = $String.format(sample, {
-            'context': context,
-        });
+        let code = $String.format(sample, { context, });
 
         return code;
         

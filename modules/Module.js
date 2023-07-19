@@ -1,50 +1,45 @@
 
-const Lines = require('@definejs/lines');
 const Files = require('../lib/Files');
 const Define = require('./Module/Define');
 const Require = require('./Module/Require');
+const Factory = require('./Module/Factory');
 
 
 module.exports = {
 
     /**
-    * 分析统计文件以及用 CMD 模式定义的模块信息。
-    * @param {string} baseDir 基目录。 一般是 `htdocs`。
-    * @param {Object} opt 
+    * 分析文件以及用 CMD 模式定义的模块信息。
     */
-    stat(baseDir, opt) {
-        
+    parse(dir, { defines, patterns, }) {
+        let file$info = Files.readDir(dir, patterns);
 
-        let { defines, patterns, excludes, } = opt;
-
-        let infos = Files.stat(baseDir, patterns, excludes, function (info, index) {
+        Object.entries(file$info).forEach(([file, info]) => {
             let { content, } = info;
             let modules = Define.parse(content, defines);
 
-            
-
             modules.forEach((module) => {
                 let { factory, } = module;
-                let { content, } = factory;
-                let lines = Lines.split(content);
-                let requires = Require.parse(content);
+                let { beginNo, endNo, length, byteLength, } = Factory.getLineNos(content, factory);
 
+                module.requires = Require.parse(factory, beginNo);
 
                 //扩展一些字段。
-                factory.lines = lines.length;
-                module.requires = requires;
+                Object.assign(module.factory, {
+                    content: undefined, //不要返回 content。
+                    beginNo, endNo, length, byteLength,
+                });
             });
 
-            //增加字段。
-            return {
-                ...info,
+            Object.assign(info, {
+                content: undefined, //内容就不要返回了，否则数据量太大。
                 modules,
-            };
+            });
+
         });
 
-       
-        return infos;
 
+        return file$info;
     },
+
 
 };

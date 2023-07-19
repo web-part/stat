@@ -22,16 +22,15 @@ function getId(item) {
 
 module.exports = {
 
-    parse(content) {
+    parse({ content, beginNo, }) {
         let regexp = /\s+module.require\s*\(\s*["']\S+["']\)?/g;
         let list = content.match(regexp);
         if (!list) {
             return [];
 
         }
+        
         let lines = Lines.split(content);
-
-
         let startNo = 0;    //下次搜索的起始行号
 
         list = list.map((item, index) => {
@@ -44,7 +43,7 @@ module.exports = {
 
             return {
                 'id': id,
-                'no': no,
+                'no': no + beginNo,
                 'match': item,
                 'line': line,
             };

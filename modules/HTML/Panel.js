@@ -42,7 +42,7 @@ module.exports = {
                 'method': method,
                 'factory': {
                     'type': item.name, //标签名，如 `div`。
-                    'content': content,
+                    // 'content': content,
                     'md5': md5,
                     'lines': lines.length,
                     'attribs': { ...item.attribs, },
